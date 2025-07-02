@@ -5,77 +5,88 @@ import net.proteanit.sql.DbUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 
 public class Ambulance extends JFrame {
 
-    Ambulance(){
+    Ambulance() {
+        // Fullscreen setup
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(false);
+        setLayout(null);
+        getContentPane().setBackground(Color.WHITE);
 
+        // Header panel
+        JPanel header = new JPanel();
+        header.setLayout(null);
+        header.setBounds(0, 0, 1920, 100);
+        header.setBackground(new Color(40, 60, 90));
+        add(header);
+
+        JLabel title = new JLabel("🚑 Ambulance Availability");
+        title.setBounds(50, 25, 800, 40);
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        header.add(title);
+
+        // Main panel
         JPanel panel = new JPanel();
-        panel.setBounds(5,5,900,490);
         panel.setLayout(null);
-        panel.setBackground(new Color(109,164,170));
-        panel.setVisible(true);
+        panel.setBounds(80, 120, 1760, 750);
+        panel.setBackground(new Color(235, 245, 250));
+        panel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(109, 164, 170), 2),
+                "Ambulance Details",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 22),
+                new Color(109, 164, 170)
+        ));
         add(panel);
 
+        // Table setup
         JTable table = new JTable();
-        table.setBounds(10,34,800,450);
-        table.setBackground(new Color(109,164,170));
-        table.setFont(new Font("Tahoma",Font.BOLD,12));
-        panel.add(table);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(28);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setBackground(Color.WHITE);
+        table.setForeground(Color.BLACK);
 
-        try{
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(20, 80, 1700, 600);
+        panel.add(scrollPane);
+
+        // Back Button
+        JButton backBtn = new JButton("⬅ Back");
+        backBtn.setBounds(1620, 700, 100, 30);
+        backBtn.setBackground(new Color(255, 100, 100));
+        backBtn.setForeground(Color.WHITE);
+        backBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        panel.add(backBtn);
+
+        backBtn.addActionListener((ActionEvent e) -> setVisible(false));
+
+        // Fetch & Display Data
+        try {
             conn c = new conn();
-            String q = "select * from Ambulance";
-            ResultSet resultSet = c.statement.executeQuery(q);
-            table.setModel(DbUtils.resultSetToTableModel(resultSet));
+            String q = "SELECT * FROM Ambulance";
+            ResultSet rs = c.statement.executeQuery(q);
+            table.setModel(DbUtils.resultSetToTableModel(rs));
 
-
-        }catch(Exception e){
+            // Optional: Resize columns
+            if (table.getColumnCount() >= 4) {
+                table.getColumnModel().getColumn(0).setPreferredWidth(300); // Name
+                table.getColumnModel().getColumn(1).setPreferredWidth(200); // Gender
+                table.getColumnModel().getColumn(2).setPreferredWidth(200); // Available
+                table.getColumnModel().getColumn(3).setPreferredWidth(300); // Location
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JLabel label1 = new JLabel("Name");
-        label1.setBounds(30,9,70,20);
-        label1.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label1);
-
-        JLabel label2 = new JLabel("Gender");
-        label2.setBounds(220,9,70,20);
-        label2.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label2);
-
-        JLabel label3 = new JLabel("Available");
-        label3.setBounds(446,9,70,20);
-        label3.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label3);
-
-        JLabel label4 = new JLabel("Location");
-        label4.setBounds(626,9,70,20);
-        label4.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label4);
-
-
-        JButton btn = new JButton("Back");
-        btn.setBounds(450,510,120,30);
-        btn.setBackground(Color.BLACK);
-        btn.setForeground(Color.white);
-        panel.add(btn);
-        btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-
-        setUndecorated(true);
-        setSize(900,500);
-        setLayout(null);
-        setLocation(200,230);
         setVisible(true);
     }
-    public static void main(String args[]){
+
+    public static void main(String[] args) {
         new Ambulance();
     }
 }

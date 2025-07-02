@@ -4,92 +4,100 @@ import net.proteanit.sql.DbUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 
 public class Room extends JFrame {
     JTable table;
+    private JFrame previousFrame;
 
-    Room(){
+    Room(JFrame previousFrame) {
+        this.previousFrame = previousFrame;
 
+        // Frame setup
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(false);
+        setLayout(null);
+        getContentPane().setBackground(Color.WHITE);
+
+        // Header panel
+        JPanel header = new JPanel();
+        header.setLayout(null);
+        header.setBounds(0, 0, 1920, 100);
+        header.setBackground(new Color(40, 60, 90));
+        add(header);
+
+        JLabel title = new JLabel("🛏️ Room Details");
+        title.setBounds(50, 25, 800, 40);
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        header.add(title);
+
+        // Main panel
         JPanel panel = new JPanel();
-        panel.setBounds(5,5,890,590);
-        panel.setBackground(new Color(90,156,163));
         panel.setLayout(null);
+        panel.setBounds(100, 120, 1700, 750);
+        panel.setBackground(new Color(235, 245, 250));
+        panel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(109, 164, 170), 2),
+                "Room Information",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 22),
+                new Color(109, 164, 170)
+        ));
         add(panel);
 
-        ImageIcon imageIcon = new ImageIcon(ClassLoader.getSystemResource("icon/roomm.png"));
-        Image image = imageIcon.getImage().getScaledInstance(200,200,Image.SCALE_DEFAULT);
-        ImageIcon imageIcon1 = new ImageIcon(image);
-        JLabel label = new JLabel(imageIcon1);
-        label.setBounds(600,200,200,200);
-        panel.add(label);
-
+        // Table
         table = new JTable();
-        table.setBounds(10,40,500,400);
-        table.setBackground(new Color(90,156,163));
-        panel.add(table);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(28);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(30, 100, 1000, 330);
+        panel.add(scrollPane);
 
-        try{
+        // Fetch data
+        try {
             conn c = new conn();
-            String q = "select * from Room";
-            ResultSet resultSet = c.statement.executeQuery(q);
-            //executeupdate for inserting data
-            //executeQuery forretriving data
-            table.setModel(DbUtils.resultSetToTableModel(resultSet));
+            String q = "SELECT * FROM Room";
+            ResultSet rs = c.statement.executeQuery(q);
+            table.setModel(DbUtils.resultSetToTableModel(rs));
 
-        }catch(Exception e){
+            if (table.getColumnCount() >= 4) {
+                table.getColumnModel().getColumn(0).setPreferredWidth(150); // Room No
+                table.getColumnModel().getColumn(1).setPreferredWidth(150); // Availability
+                table.getColumnModel().getColumn(2).setPreferredWidth(150); // Price
+                table.getColumnModel().getColumn(3).setPreferredWidth(200); // Room Type
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JLabel label1  = new JLabel("Room NO");
-        label1.setBounds(12,15,80,35);
-        label1.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label1);
+        // Image
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("icon/roomm.png"));
+        Image img = icon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
+        JLabel imageLabel = new JLabel(new ImageIcon(img));
+        imageLabel.setBounds(1100, 180, 250, 250);
+        panel.add(imageLabel);
 
-        JLabel label2  = new JLabel("Availability");
-        label2.setBounds(140,15,80,15);
-        label2.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label2);
+        // Back Button
+        JButton backBtn = new JButton("⬅ Back");
+        backBtn.setBounds(1500, 650, 120, 30);
+        backBtn.setBackground(new Color(255, 100, 100));
+        backBtn.setForeground(Color.WHITE);
+        backBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        panel.add(backBtn);
 
-        JLabel label3  = new JLabel("Price");
-        label3.setBounds(275,15,80,15);
-        label3.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label3);
-
-        JLabel label4  = new JLabel("Room Type");
-        label4.setBounds(400,15,80,15);
-        label4.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label4);
-
-        JButton back = new JButton("Back");
-        back.setBounds(200,500,+120,30);
-        back.setBackground(Color.BLACK);
-        back.setForeground(Color.white);
-        panel.add(back);
-        back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+        backBtn.addActionListener(e -> {
+            setVisible(false);
+            if (previousFrame != null) {
+                previousFrame.setVisible(true);
             }
         });
 
-
-
-
-
-
-        // frame initialization
-        setUndecorated(true);
-        setSize(900,600);
-        setLayout(null);
-        setLocation(300,230);
         setVisible(true);
     }
 
-
-    public static void main(String[] args){
-        new Room();
+    public static void main(String[] args) {
+        new Room(null);
     }
 }

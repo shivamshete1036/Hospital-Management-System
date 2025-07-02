@@ -5,126 +5,133 @@ import net.proteanit.sql.DbUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 
 public class SearchRoom extends JFrame {
 
     Choice choice;
+    JTable table;
 
-    JTable tabel;
-    SearchRoom(){
+    SearchRoom() {
+        // Frame setup
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
+        setLayout(null);
+        getContentPane().setBackground(Color.WHITE);
 
+        // Header panel
+        JPanel header = new JPanel();
+        header.setLayout(null);
+        header.setBounds(0, 0, 1920, 100);
+        header.setBackground(new Color(40, 60, 90));
+        add(header);
 
+        JLabel title = new JLabel("🔍 Search Room");
+        title.setBounds(50, 25, 800, 40);
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        header.add(title);
+
+        // Get screen size
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) screenSize.getWidth();
+        int height = (int) screenSize.getHeight();
+
+        // Main panel
         JPanel panel = new JPanel();
-        panel.setBounds(5,5,690,490);
-        panel.setBackground(new Color(90,156,163));
         panel.setLayout(null);
+        panel.setBounds(0, 100, width, height - 100);
+        panel.setBackground(new Color(235, 245, 250));
+        panel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(109, 164, 170), 2),
+                "Room Search",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 22),
+                new Color(109, 164, 170)
+        ));
         add(panel);
 
-        JLabel For = new JLabel("Search For Room");
-        For.setBounds(250,11,186,31);
-        For.setForeground(Color.white);
-        For.setFont(new Font("Tahoma",Font.BOLD,20));
-        panel.add(For);
-
-        JLabel status = new JLabel("Status");
-        status.setBounds(70,73,80,20);
-        status.setForeground(Color.white);
-        status.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(status);
+        JLabel statusLabel = new JLabel("Status:");
+        statusLabel.setBounds(50, 50, 100, 30);
+        statusLabel.setForeground(Color.BLACK);
+        statusLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+        panel.add(statusLabel);
 
         choice = new Choice();
-        choice.setBounds(170,70,120,20);
+        choice.setBounds(150, 50, 200, 30);
+        choice.setFont(new Font("Tahoma", Font.BOLD, 16));
         choice.add("Available");
         choice.add("Occupied");
         panel.add(choice);
 
-        tabel = new JTable();
-        tabel.setBounds(0,183,700,210);
-        tabel.setFont(new Font("Tahoma",Font.BOLD,14));
-        tabel.setBackground(new Color(90,156,163));
-        tabel.setForeground(Color.white);
-        panel.add(tabel);
+        // Table setup
+        table = new JTable();
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(28);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(30, 150, width - 200, height - 300);
+        panel.add(scrollPane);
 
-        try{
-            conn c = new conn();
-            String q = "select * from Room";
-            ResultSet resultSet = c.statement.executeQuery(q);
-            tabel.setModel(DbUtils.resultSetToTableModel(resultSet));
-
-        }catch(Exception e){
-            e.printStackTrace();
+        // Column headers
+        String[] headers = {"Room No", "Availability", "Price", "Bed Type"};
+        int[] xPos = {50, 300, 550, 800};
+        for (int i = 0; i < headers.length; i++) {
+            JLabel label = new JLabel(headers[i]);
+            label.setBounds(xPos[i], 120, 200, 25);
+            label.setFont(new Font("Tahoma", Font.BOLD, 16));
+            label.setForeground(Color.BLACK);
+            panel.add(label);
         }
 
-        JLabel Roomno = new JLabel("Room Number");
-        Roomno.setBounds(23,162,150,20);
-        Roomno.setForeground(Color.white);
-        Roomno.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(Roomno);
+        // Buttons
+        JButton searchBtn = new JButton("Search");
+        searchBtn.setBounds(width / 2 - 160, height - 150, 150, 35);
+        searchBtn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        searchBtn.setBackground(Color.BLACK);
+        searchBtn.setForeground(Color.WHITE);
+        panel.add(searchBtn);
 
-        JLabel available = new JLabel("Availability");
-        available.setBounds(175,162,150,20);
-        available.setForeground(Color.white);
-        available.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(available);
+        JButton backBtn = new JButton("⬅ Back");
+        backBtn.setBounds(width / 2 + 10, height - 150, 150, 35);
+        backBtn.setFont(new Font("Tahoma", Font.BOLD, 14));
+        backBtn.setBackground(new Color(255, 100, 100));
+        backBtn.setForeground(Color.WHITE);
+        panel.add(backBtn);
 
-        JLabel price = new JLabel("Price");
-        price.setBounds(458,162,150,20);
-        price.setForeground(Color.white);
-        price.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(price);
-
-        JLabel bed = new JLabel("Bed Type");
-        bed.setBounds(580,162,150,20);
-        bed.setForeground(Color.white);
-        bed.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(bed);
-
-        JButton Search = new JButton("Search");
-        Search.setBounds(200,420,120,25);
-        Search.setBackground(Color.black);
-        Search.setForeground(Color.white);
-        panel.add(Search);
-        Search.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String q = "select * from Room where Availability = '"+choice.getSelectedItem()+"'";
-                try{
-                    conn c = new conn();
-                    ResultSet resultSet = c.statement.executeQuery(q);
-                    tabel.setModel(DbUtils.resultSetToTableModel(resultSet));
-
-                }catch(Exception ee){
-                    ee.printStackTrace();
-                }
-
-            }
+        // Listeners
+        searchBtn.addActionListener((ActionEvent e) -> {
+            String q = "SELECT * FROM Room WHERE Availability = '" + choice.getSelectedItem() + "'";
+            loadTableData(q);
         });
 
-        JButton Back = new JButton("Back");
-        Back.setBounds(380,420,120,25);
-        Back.setBackground(Color.black);
-        Back.setForeground(Color.white);
-        panel.add(Back);
-        Back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        backBtn.addActionListener(e -> setVisible(false));
 
-        setUndecorated(true);
-        setSize(700,500);
-        setLayout(null);
-        setLocation(450,250);
+        // Load initial data
+        loadTableData("SELECT * FROM Room");
+
         setVisible(true);
-
-
     }
 
-    public static void main(String[] args){
+    private void loadTableData(String query) {
+        try {
+            conn c = new conn();
+            ResultSet rs = c.statement.executeQuery(query);
+            table.setModel(DbUtils.resultSetToTableModel(rs));
+
+            if (table.getColumnCount() >= 4) {
+                table.getColumnModel().getColumn(0).setPreferredWidth(300);
+                table.getColumnModel().getColumn(1).setPreferredWidth(300);
+                table.getColumnModel().getColumn(2).setPreferredWidth(300);
+                table.getColumnModel().getColumn(3).setPreferredWidth(300);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
         new SearchRoom();
     }
 }

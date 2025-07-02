@@ -2,166 +2,104 @@ package hospital.management.sysytem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class Reception extends JFrame {
 
-    Reception(){
-    // panel is nothing but the navbar
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-        panel.setBounds(5,160,1525,670);
-        panel.setBackground(new Color(109,164,170));
-        add(panel);
+    Reception() {
+        // Set fullscreen
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(false);
+        setLayout(null);
+        getContentPane().setBackground(Color.WHITE);
 
-        JPanel panel1 = new JPanel();
-        panel1.setLayout(null);
-        panel1.setBounds(5,5,1525,150);
-        panel1.setBackground(new Color(109,164,170));
-        add(panel1);
+        // Top Banner Panel
+        JPanel bannerPanel = new JPanel();
+        bannerPanel.setLayout(null);
+        bannerPanel.setBounds(0, 0, 1920, 150);
+        bannerPanel.setBackground(new Color(40, 60, 90));
+        add(bannerPanel);
 
+        JLabel title = new JLabel("\uD83C\uDFE5 Hospital Management Dashboard");
+        title.setBounds(40, 40, 800, 40);
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        bannerPanel.add(title);
+
+        // Icons on right
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/dr.png"));
-        Image image = i1.getImage().getScaledInstance(250,250,Image.SCALE_DEFAULT);
-        ImageIcon i2 =new ImageIcon(image);//contaains scaled image
-        JLabel label = new JLabel(i2);
-        label.setBounds(1300,0,250,250);
-        panel1.add(label);// this image will add to the panel1
+        Image image1 = i1.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        JLabel label1 = new JLabel(new ImageIcon(image1));
+        label1.setBounds(1700, 20, 100, 100);
+        bannerPanel.add(label1);
 
-        ImageIcon i11 = new ImageIcon(ClassLoader.getSystemResource("icon/amb.png"));
-        Image image1 = i11.getImage().getScaledInstance(300,100,Image.SCALE_DEFAULT);
-        ImageIcon i22 =new ImageIcon(image1);//contaains scaled image
-        JLabel label1 = new JLabel(i22);
-        label1.setBounds(1000,50,300,100);
-        panel1.add(label1);// this image will add to the panel1
+        ImageIcon i2 = new ImageIcon(ClassLoader.getSystemResource("icon/amb.png"));
+        Image image2 = i2.getImage().getScaledInstance(130, 50, Image.SCALE_SMOOTH);
+        JLabel label2 = new JLabel(new ImageIcon(image2));
+        label2.setBounds(1520, 50, 130, 50);
+        bannerPanel.add(label2);
 
+        // Navigation Panel
+        JPanel navPanel = new JPanel();
+        navPanel.setLayout(new GridLayout(3, 4, 40, 30));
+        navPanel.setBounds(100, 200, 1320, 350);
+        navPanel.setBackground(new Color(245, 250, 255));
+        navPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(109, 164, 170), 2),
+                "Quick Navigation",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 22),
+                new Color(109, 164, 170)
+        ));
+        add(navPanel);
 
-        JButton btn1 = new JButton("Add New Patient");
-        btn1.setBounds(30,15,200,30);
-        btn1.setBackground(new Color(246,215,118));
-        panel1.add(btn1);
-        btn1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                    new NEW_PATIENT();
-            }
+        Font btnFont = new Font("Segoe UI", Font.BOLD, 16);
+        Color btnBg = new Color(246, 215, 118);
+
+        JButton btn1 = createButton("➕ Add New Patient", btnFont, btnBg, () -> new NEW_PATIENT());
+        JButton btn2 = createButton("🛏️ Room", btnFont, btnBg, () -> {
+            new Room(this);
+        });
+        JButton btn3 = createButton("🏬 Department", btnFont, btnBg, () -> new Department());
+        JButton btn4 = createButton("👩‍⚕️ All Employee Info", btnFont, btnBg, () -> new Employee_info());
+        JButton btn5 = createButton("📋 Patient Info", btnFont, btnBg, () -> new All_Patient_Info());
+        JButton btn6 = createButton("📤 Patient Discharge", btnFont, btnBg, () -> new Patient_Discharge());
+        JButton btn7 = createButton("✏️ Update Patient Details", btnFont, btnBg, () -> new Update_Patient_Details());
+        JButton btn8 = createButton("🚑 Hospital Ambulance", btnFont, btnBg, () -> new Ambulance());
+        JButton btn9 = createButton("🔍 Search Room", btnFont, btnBg, () -> new SearchRoom());
+        JButton btn10 = createButton("🔓 Logout", btnFont, new Color(255, 100, 100), () -> {
+            setVisible(false);
+            new Login();
         });
 
-        JButton btn2 = new JButton("Room");
-        btn2.setBounds(30,58,200,30);
-        btn2.setBackground(new Color(246,215,118));
-        panel1.add(btn2);
-        btn2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Room();
-            }
-        });
+        navPanel.add(btn1);
+        navPanel.add(btn2);
+        navPanel.add(btn3);
+        navPanel.add(btn4);
+        navPanel.add(btn5);
+        navPanel.add(btn6);
+        navPanel.add(btn7);
+        navPanel.add(btn8);
+        navPanel.add(btn9);
+        navPanel.add(btn10);
+        navPanel.add(new JLabel());
+        navPanel.add(new JLabel());
 
-        JButton btn3 = new JButton("Department");
-        btn3.setBounds(30,100,200,30);
-        btn3.setBackground(new Color(246,215,118));
-        panel1.add(btn3);
-        btn3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Department();
-            }
-        });
-
-        JButton btn4 = new JButton("All Employee Info");
-        btn4.setBounds(270,15,200,30);
-        btn4.setBackground(new Color(246,215,118));
-        panel1.add(btn4);
-        btn4.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Employee_info();
-            }
-        });
-
-        JButton btn5 = new JButton("Patient Info");
-        btn5.setBounds(270,58,200,30);
-        btn5.setBackground(new Color(246,215,118));
-        panel1.add(btn5);
-        btn5.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                    new All_Patient_Info();
-            }
-        });
-
-        JButton btn6 = new JButton("Patient Discharge");
-        btn6.setBounds(270,100,200,30);
-        btn6.setBackground(new Color(246,215,118));
-        panel1.add(btn6);
-        btn6.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                new Patient_Discharge();
-            }
-        });
-
-
-        JButton btn7 = new JButton("Update Patient Details");
-        btn7.setBounds(510,15,200,30);
-        btn7.setBackground(new Color(246,215,118));
-        panel1.add(btn7);
-        btn7.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Update_Patient_Details();
-            }
-        });
-
-        JButton btn8 = new JButton("Hospital Ambulance");
-        btn8.setBounds(510,58,200,30);
-        btn8.setBackground(new Color(246,215,118));
-        panel1.add(btn8);
-        btn8.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Ambulance();
-            }
-        });
-
-        JButton btn9= new JButton("Search Room");
-        btn9.setBounds(510,100,200,30);
-        btn9.setBackground(new Color(246,215,118));
-        panel1.add(btn9);
-        btn9.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new SearchRoom();
-            }
-        });
-
-        JButton btn10= new JButton("Logout");
-        btn10.setBounds(750,15,200,30);
-        btn10.setBackground(new Color(246,215,118));
-        panel1.add(btn10);
-        btn10.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                new Login();
-            }
-        });
-
-
-
-
-
-       setSize(1950,1090);
-       setLayout(null);
-       getContentPane().setBackground(Color.white);
-       setVisible(true);
+        setVisible(true);
     }
 
-    public static void main(String[] args){
+    private JButton createButton(String text, Font font, Color bg, Runnable action) {
+        JButton btn = new JButton(text);
+        btn.setFont(font);
+        btn.setBackground(bg);
+        btn.setFocusPainted(false);
+        btn.setForeground(Color.BLACK);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.addActionListener(e -> action.run());
+        return btn;
+    }
+
+    public static void main(String[] args) {
         new Reception();
     }
 }
-
-

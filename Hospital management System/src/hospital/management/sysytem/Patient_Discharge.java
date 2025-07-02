@@ -2,151 +2,135 @@ package hospital.management.sysytem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.Date;
 
 public class Patient_Discharge extends JFrame {
 
-    Patient_Discharge(){
+    Patient_Discharge() {
+        // Fullscreen
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        getContentPane().setBackground(new Color(235, 245, 250));
+        setLayout(null);
 
+        // Header Panel
+        JPanel header = new JPanel();
+        header.setBackground(new Color(40, 60, 90));
+        header.setBounds(0, 0, 1920, 100);
+        header.setLayout(null);
+        add(header);
+
+        JLabel heading = new JLabel(" Patient Discharge Panel");
+        heading.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        heading.setForeground(Color.WHITE);
+        heading.setBounds(50, 25, 600, 40);
+        header.add(heading);
+
+        // Form Panel
         JPanel panel = new JPanel();
-        panel.setBounds(5,5,790,390);
-        panel.setBackground(new Color(90,156,163));
         panel.setLayout(null);
+        panel.setBounds(100, 150, 900, 500);
+        panel.setBackground(new Color(90, 156, 163));
+        panel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(255, 255, 255), 2),
+                "Discharge Summary",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 20),
+                Color.WHITE
+        ));
         add(panel);
 
-        JLabel label = new JLabel("CHECK OUT");
-        label.setBounds(30,20,150,30);
-        label.setFont(new Font("Tahoma",Font.BOLD,20));
-        label.setForeground(Color.white);
-        panel.add(label);
-
-        JLabel label2= new JLabel("Customer Id");
-        label2.setBounds(30,80,150,30);
-        label2.setFont(new Font("Tahoma",Font.BOLD,14));
-        label2.setForeground(Color.white);
-        panel.add(label2);
+        // Labels and Fields
+        String[] fieldLabels = {"Patient ID :", "Room Number :", "Check-in Time :", "Discharge Time :"};
+        int y = 60;
+        for (String text : fieldLabels) {
+            JLabel lbl = new JLabel(text);
+            lbl.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            lbl.setForeground(Color.WHITE);
+            lbl.setBounds(60, y, 150, 30);
+            panel.add(lbl);
+            y += 50;
+        }
 
         Choice choice = new Choice();
-        choice.setBounds(200,80,200,30);
+        choice.setBounds(230, 60, 200, 25);
         panel.add(choice);
 
-        //logic for accessing number ID in choice box
-        try{
+        JLabel RNo = new JLabel();
+        JLabel InTime = new JLabel();
+        JLabel OutTime = new JLabel(new Date().toString());
+
+        JLabel[] values = {RNo, InTime, OutTime};
+        y = 110;
+        for (JLabel value : values) {
+            value.setBounds(230, y, 400, 25);
+            value.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+            value.setForeground(Color.WHITE);
+            panel.add(value);
+            y += 50;
+        }
+
+        // Fill Choice with Patient IDs
+        try {
             conn c = new conn();
-            ResultSet resultSet = c.statement.executeQuery("select * from Patient_Info");
-            while(resultSet.next()){
-                choice.add(resultSet.getString("Number"));
+            ResultSet rs = c.statement.executeQuery("select * from Patient_Info");
+            while (rs.next()) {
+                choice.add(rs.getString("Number"));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JLabel label3 = new JLabel("Room Number");
-        label3.setBounds(30,130,150,30);
-        label3.setFont(new Font("Tahoma",Font.BOLD,14));
-        label3.setForeground(Color.white);
-        panel.add(label3);
+        // Buttons
+        JButton checkBtn = new JButton("\uD83D\uDD0D Check");
+        JButton dischargeBtn = new JButton("\uD83D\uDDD1 Discharge");
+        JButton backBtn = new JButton("\u2B05 Back");
 
-        JLabel RNo = new JLabel();
-        RNo.setBounds(200,130,150,30);
-        RNo.setFont(new Font("Tahoma",Font.BOLD,14));
-        RNo.setForeground(Color.white);
-        panel.add(RNo);
+        checkBtn.setBounds(100, 320, 150, 35);
+        dischargeBtn.setBounds(300, 320, 150, 35);
+        backBtn.setBounds(500, 320, 150, 35);
 
-        JLabel label4 = new JLabel("In Time");
-        label4.setBounds(30,180,150,30);
-        label4.setFont(new Font("Tahoma",Font.BOLD,14));
-        label4.setForeground(Color.white);
-        panel.add(label4);
+        JButton[] buttons = {checkBtn, dischargeBtn, backBtn};
+        for (JButton btn : buttons) {
+            btn.setBackground(new Color(0, 123, 255));
+            btn.setForeground(Color.WHITE);
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+            btn.setFocusPainted(false);
+            panel.add(btn);
+        }
 
-        JLabel InTime = new JLabel();
-        InTime.setBounds(200,180,250,30);
-        InTime.setFont(new Font("Tahoma",Font.BOLD,14));
-        InTime.setForeground(Color.white);
-        panel.add(InTime);
-
-        JLabel label5 = new JLabel("Out Time");
-        label5.setBounds(30,230,150,30);
-        label5.setFont(new Font("Tahoma",Font.BOLD,14));
-        label5.setForeground(Color.white);
-        panel.add(label5);
-
-        Date date = new Date();
-
-        JLabel OutTime = new JLabel(""+date);
-        OutTime.setBounds(200,230,250,30);
-        OutTime.setFont(new Font("Tahoma",Font.BOLD,14));
-        OutTime.setForeground(Color.white);
-        panel.add(OutTime);
-
-        JButton discharge = new JButton("Discharge");
-        discharge.setBounds(30,300,120,30);
-        discharge.setBackground(Color.BLACK);
-        discharge.setForeground(Color.white);
-        panel.add(discharge);
-        discharge.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
+        // Button Actions
+        checkBtn.addActionListener(e -> {
+            try {
                 conn c = new conn();
-                try{
-                    c.statement.executeUpdate("delete from Patient_Info where Number = '"+choice.getSelectedItem()+"'");//executeUpdate for deleting information
-                    c.statement.executeUpdate("update Room set Availability = 'Available' where Room_No = '"+RNo.getText()+"' ");
-                    JOptionPane.showMessageDialog(null,"Done");
-                }catch(Exception ee){
-                    ee.printStackTrace();
+                ResultSet rs = c.statement.executeQuery("select * from Patient_Info where Number = '" + choice.getSelectedItem() + "'");
+                while (rs.next()) {
+                    RNo.setText(rs.getString("Room_Number"));
+                    InTime.setText(rs.getString("Time"));
                 }
-
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
 
-
-
-        JButton Check = new JButton("Check");
-        Check.setBounds(170,300,120,30);
-        Check.setBackground(Color.BLACK);
-        Check.setForeground(Color.white);
-        panel.add(Check);
-        Check.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        dischargeBtn.addActionListener(e -> {
+            try {
                 conn c = new conn();
-                try{
-                   ResultSet resultSet = c.statement.executeQuery("select * from Patient_Info where Number = '"+choice.getSelectedItem()+"'");
-                   while(resultSet.next()){
-                       RNo.setText(resultSet.getString("Room_Number"));
-                       InTime.setText(resultSet.getString("Time"));
-
-                   }
-                }catch(Exception E){
-                    E.printStackTrace();
-                }
-            }
-        });
-
-        JButton Back = new JButton("Back");
-        Back.setBounds(300,300,120,30);
-        Back.setBackground(Color.BLACK);
-        Back.setForeground(Color.white);
-        panel.add(Back);
-        Back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                c.statement.executeUpdate("delete from Patient_Info where Number = '" + choice.getSelectedItem() + "'");
+                c.statement.executeUpdate("update Room set Availability = 'Available' where Room_No = '" + RNo.getText() + "'");
+                JOptionPane.showMessageDialog(null, "\u2714 Patient Discharged Successfully");
                 setVisible(false);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
 
-        setUndecorated(true);
-        setSize(800,400);
-        setLayout(null);
-        setLocation(400,250);
+        backBtn.addActionListener(e -> setVisible(false));
+
         setVisible(true);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new Patient_Discharge();
     }
 }

@@ -4,92 +4,90 @@ import net.proteanit.sql.DbUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.ResultSet;
 
 public class Employee_info extends JFrame {
 
-    Employee_info(){
+    Employee_info() {
+        // Fullscreen window
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(false);
+        setLayout(null);
+        getContentPane().setBackground(Color.WHITE);
 
+        // Header panel
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(null);
+        headerPanel.setBounds(0, 0, 1920, 100);
+        headerPanel.setBackground(new Color(40, 60, 90));
+        add(headerPanel);
 
-        JPanel panel = new JPanel();
-        panel.setBounds(5,5,990,590);
-        panel.setBackground(new Color(109,164,170));
-        panel.setLayout(null);
-        add(panel);
+        JLabel title = new JLabel("👨‍⚕️ Employee Information");
+        title.setBounds(50, 25, 800, 40);
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        headerPanel.add(title);
 
+        // Table panel with BorderLayout for scroll handling
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.setBackground(new Color(235, 245, 250));
+        tablePanel.setBounds(80, 120, 1760, 800);
+        tablePanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(109, 164, 170), 2),
+                "All Employees",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 22),
+                new Color(109, 164, 170)
+        ));
+        add(tablePanel);
+
+        // Table setup
         JTable table = new JTable();
-        table.setBounds(10,34,980,450);
-        table.setBackground(new Color(109,164,170));
-        table.setFont(new Font("Tahoma",Font.BOLD,12));
-        panel.add(table);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(28);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // enable horizontal scrolling
+        table.setBackground(Color.WHITE);
+        table.setForeground(Color.BLACK);
 
-        try{
+        // Scroll pane for table
+        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Back button
+        JButton backBtn = new JButton("⬅ Back");
+        backBtn.setBackground(new Color(255, 100, 100));
+        backBtn.setForeground(Color.WHITE);
+        backBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        backBtn.setFocusPainted(false);
+        backBtn.setBounds(1700, 940, 120, 35); // placed near bottom-right of screen
+        add(backBtn);
+
+        backBtn.addActionListener(e -> setVisible(false));
+
+        // Fetch & display data
+        try {
             conn c = new conn();
-            String q = "select * from EMP_INFO";
-            ResultSet resultSet = c.statement.executeQuery(q);
-            table.setModel(DbUtils.resultSetToTableModel(resultSet));
+            String q = "SELECT * FROM EMP_INFO";
+            ResultSet rs = c.statement.executeQuery(q);
+            table.setModel(DbUtils.resultSetToTableModel(rs));
 
+            // Adjust column widths
+            table.getColumnModel().getColumn(0).setPreferredWidth(150);  // Name
+            table.getColumnModel().getColumn(1).setPreferredWidth(100);  // Post
+            table.getColumnModel().getColumn(2).setPreferredWidth(150);  // Phone Number
+            table.getColumnModel().getColumn(3).setPreferredWidth(100);  // Salary
+            table.getColumnModel().getColumn(4).setPreferredWidth(200);  // Gmail
+            table.getColumnModel().getColumn(5).setPreferredWidth(200);  // Aadhar Number
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        JLabel label = new JLabel("Name");
-        label.setBounds(30,9,70,20);
-        label.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label);
-
-        JLabel label2= new JLabel("Name");
-        label2.setBounds(180,11,70,20);
-        label2.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label2);
-
-        JLabel label3 = new JLabel("Phone_Number");
-        label3.setBounds(350,11,150,20);
-        label3.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label3);
-
-        JLabel label4 = new JLabel("Salary");
-        label4.setBounds(530,11,70,20);
-        label4.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label4);
-
-        JLabel label5 = new JLabel("Gmail");
-        label5.setBounds(710,11,70,20);
-        label5.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label5);
-
-        JLabel label6 = new JLabel("Aadhar_Number");
-        label6.setBounds(840,11,150,20);
-        label6.setFont(new Font("Tahoma",Font.BOLD,14));
-        panel.add(label6);
-
-        JButton btn = new JButton("Back");
-        btn.setBounds(350,550,120,30);
-        btn.setBackground(Color.BLACK);
-        btn.setForeground(Color.white);
-        panel.add(btn);
-        btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-
-
-        setUndecorated(true);
-        setSize(1000,600);
-        setLocation(350,230);
-        setLayout(null);
         setVisible(true);
-
     }
 
-    public static void main(String [] args){
+    public static void main(String[] args) {
         new Employee_info();
-
     }
 }
